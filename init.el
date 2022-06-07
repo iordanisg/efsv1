@@ -1,6 +1,4 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Emacs from Scratch v1 ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Emacs from Scratch v1
 
 (defvar danny/default-font-size 100)
 
@@ -8,8 +6,7 @@
 (setq inhibit-startup-message t)
 
 ;; Enable visible bell
-;; Replaced by `doom-themes-visual-bell-config`
-;;(setq visible-bell t)
+;; (setq visible-bell t) ; replaced by `doom-themes-visual-bell-config`
 
 ;; Turn off some unneeded UI elements
 (menu-bar-mode -1)   ; disable menubar
@@ -41,7 +38,7 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
-; Display column number in mode line
+; Display column number in mode-line
 (column-number-mode)
 
 ;; Display line numbers in every buffer
@@ -55,6 +52,7 @@
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; ivy
+;; https://github.com/abo-abo/swiper
 (use-package ivy
   :diminish
   :bind (("C-s" . swiper)
@@ -86,25 +84,32 @@
 	 ("C-r" . 'counsel-minibuffer-history)))
 
 ;; NOTE: the first time you load your configuration on a new machine, you'll
-;; need to run the following command interactively so that mode line icons
+;; need to run the following command interactively so that mode-line icons
 ;; display correctly:
 ;;
 ;; M-x all-the-icons-install-fonts
 (use-package all-the-icons)
 
+;; doom-modeline
+;; https://github.com/seagle0128/doom-modeline
 (use-package doom-modeline
   :init (doom-modeline-mode 1))
 
+;; doom-themes
+;; https://github.com/doomemacs/themes
 (use-package doom-themes
   :init (load-theme 'doom-palenight t))
 
+;; Flash mode-line on error
 (doom-themes-visual-bell-config)
 
-;; Enable rainbow delimiters in all programming modes
+;; rainbow-delimiters 
+;; https://github.com/Fanael/rainbow-delimiters
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
 ;; which-key
+;; https://github.com/justbur/emacs-which-key
 (use-package which-key
   :init (which-key-mode)
   :diminish which-key-mode
@@ -112,11 +117,13 @@
   (setq which-key-idle-delay 1))
 
 ;; ivy-rich
+;; https://github.com/Yevgnen/ivy-rich
 (use-package ivy-rich
   :init
   (ivy-rich-mode 1))
 
 ;; helpful
+;; https://github.com/Wilfred/helpful
 (use-package helpful
   :custom
   (counsel-describe-function-function #'helpful-callable)
@@ -128,6 +135,7 @@
   ([remap describe-key] . helpful-key))
 
 ;; general
+;; https://github.com/noctuid/general.el
 (use-package general
   :config
 
@@ -164,12 +172,14 @@
   (evil-set-initial-state 'dashboard-mode 'normal))
 
 ;; evil-collection
+;; https://github.com/emacs-evil/evil-collection
 (use-package evil-collection
   :after evil
   :config
   (evil-collection-init))
 
 ;; hydra
+;; https://github.com/abo-abo/hydra
 (use-package hydra)
 
 (defhydra hydra-text-scale (:timeout 4)
@@ -195,7 +205,7 @@
   (setq projectile-switch-project-action #'projectile-dired))
 
 ;; counsel-projectile
-;; adds more actions to projects
+;; https://github.com/ericdanan/counsel-projectile
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
 
@@ -207,11 +217,10 @@
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
 ;; forge
+;; https://github.com/magit/forge
 (use-package forge)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Emacs from Scratch v2 ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Emacs from Scratch v2
 
 ;; M-x recentf-open-files
 (recentf-mode 1)
