@@ -1,6 +1,6 @@
 ;; Emacs from Scratch v1
 
-(defvar danny/default-font-size 100)
+(defvar ig-efsv1/default-font-size 100)
 
 ;; Disable splash screen
 (setq inhibit-startup-message t)
@@ -15,10 +15,21 @@
 (tooltip-mode -1)    ; disable tooltips
 (set-fringe-mode 10) ; give some breathing space
 
-(set-face-attribute 'default nil :font "MesloLGS NF" :height danny/default-font-size)
+;; Disable line numbers for some modes
+(dolist (mode '(org-mode-hook
+		term-mode-hook
+		shell-mode-hook
+		eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-;; Make ESC quit prompts
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+;; Font configuration
+(set-face-attribute 'default nil :font "MesloLGS NF" :height ig-efsv1/default-font-size)
+
+;; Set the fixed pitch face
+(set-face-attribute 'fixed-pitch nil :font "MesloLGS NF" :height 100)
+
+;; Set the variable pitch face
+(set-face-attribute 'variable-pitch nil :font "Open Sans" :height 120 :weight 'normal)
 
 ;; Initialize package sources
 (require 'package)
@@ -38,18 +49,11 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
-; Display column number in mode-line
+;; Display column number in mode-line
 (column-number-mode)
 
 ;; Display line numbers in every buffer
-(global-display-line-numbers-mode 1)
-
-;; Disable line numbers for some modes
-(dolist (mode '(org-mode-hook
-		term-mode-hook
-		shell-mode-hook
-		eshell-mode-hook))
-  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+(global-display-line-numbers-mode t)
 
 ;; ivy
 ;; https://github.com/abo-abo/swiper
@@ -134,17 +138,20 @@
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
 
+;; Make ESC quit prompts
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
 ;; general
 ;; https://github.com/noctuid/general.el
 (use-package general
   :config
 
-  (general-create-definer danny/leader-keys
+  (general-create-definer ig-efsv1/leader-keys
     :keymaps '(normal insert visual emacs)
     :prefix "SPC"
     :global-prefix "C-SPC")
 
-  (danny/leader-keys
+  (ig-efsv1/leader-keys
     "t" '(:ignore t :which-key "toggles")
     "tt" '(counsel-load-theme :which-key "choose theme")))
 
@@ -189,7 +196,7 @@
   ("k" text-scale-decrease "out")
   ("f" nil "finished" :exit t))
 
-(danny/leader-keys
+(ig-efsv1/leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text"))
 
 ;; projectile
@@ -210,7 +217,7 @@
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
 
-;; magic
+;; magit
 ;; https://magit.vc/
 (use-package magit
   :commands (magit-status magit-git-current-branch)
@@ -220,6 +227,59 @@
 ;; forge
 ;; https://github.com/magit/forge
 (use-package forge)
+
+;; org
+(defun ig-efsv1/org-mode-setup ()
+  (org-indent-mode)
+  ;;(variable-pitch-mode 1) ; TODO: figure out why variable-pitch-mode breaks indentation
+  (visual-line-mode 1))
+
+(defun ig-efsv1/org-font-setup ()
+  ;; Replace list hyphen with dot
+  (font-lock-add-keywords 'org-mode
+			  '(("^ *\\([-]\\) "
+			     (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+
+  ;; Set faces for heading levels
+  (dolist (face '((org-level-1 . 1.2)
+		  (org-level-2 . 1.1)
+ 		  (org-level-3 . 1.05)
+ 		  (org-level-4 . 1.0)
+ 		  (org-level-5 . 1.1)
+ 		  (org-level-6 . 1.1)
+ 		  (org-level-7 . 1.1)
+ 		  (org-level-8 . 1.1)))
+  (set-face-attribute (car face) nil :font "Open Sans" :weight 'normal :height (cdr face)))
+
+  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-table nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+
+(use-package org
+  :hook (org-mode . ig-efsv1/org-mode-setup)
+  :config
+  (setq org-ellipsis " ▾"
+	org-hide-emphasis-markers t)
+  (ig-efsv1/org-font-setup))
+
+(use-package org-bullets
+  :after org
+  :hook (org-mode . org-bullets-mode)
+  :custom
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+(defun ig-efsv1/org-mode-visual-fill ()
+  (setq visual-fill-column-width 100
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+(use-package visual-fill-column
+  :hook (org-mode . ig-efsv1/org-mode-visual-fill))
 
 ;; Emacs from Scratch v2
 
