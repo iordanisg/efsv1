@@ -107,7 +107,7 @@ Packages:
   ;; general.el
   (use-package general
     :config
-    (general-create-definer ig-efsv1/leader-keys
+    (general-create-definer efs/leader-keys
       :keymaps '(normal insert visual emacs)
       :prefix "SPC"
       :global-prefix "C-SPC")
