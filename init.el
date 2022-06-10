@@ -231,7 +231,7 @@
 ;; org
 (defun ig-efsv1/org-mode-setup ()
   (org-indent-mode)
-  ;;(variable-pitch-mode 1) ; TODO: figure out why variable-pitch-mode breaks indentation
+  (variable-pitch-mode 1)
   (visual-line-mode 1))
 
 (defun ig-efsv1/org-font-setup ()
