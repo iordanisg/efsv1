@@ -432,7 +432,7 @@ Packages:
 - [[https://github.com/magit/forge][forge]]
 
 Resources:
-- [[- https://magit.vc/manual/forge/Token-Creation.html#Token-Creation][Token Creation]]
+- [[https://magit.vc/manual/forge/Token-Creation.html#Token-Creation][Token Creation]]
 - [[https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started][Getting Started]]
  
   #+begin_src emacs-lisp
