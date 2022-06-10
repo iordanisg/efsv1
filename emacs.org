@@ -179,7 +179,7 @@ Open Questions:
 - Do I need both =anzu= and =evil-anzu=?
 - Is there an alternative to installing two packages, just for displaying matches in the mode line?
 
-  #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 
   (use-package all-the-icons)
 
@@ -198,7 +198,7 @@ Open Questions:
   (use-package evil-anzu
     :after (evil anzu))
 
-  #+end_src
+#+end_src
 
 ** Which Key
 
@@ -435,7 +435,7 @@ Resources:
 - [[https://magit.vc/manual/forge/Token-Creation.html#Token-Creation][Token Creation]]
 - [[https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started][Getting Started]]
  
-  #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 
   ;; magit
   (use-package magit
@@ -448,7 +448,7 @@ Resources:
   ;; forge
   (use-package forge)
 
-  #+end_src
+#+end_src
 
 ** Rainbow Delimiters
 
