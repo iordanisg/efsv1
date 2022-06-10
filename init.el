@@ -1,6 +1,5 @@
 ;; Emacs from Scratch v1
 
-(defvar ig-efsv1/default-font-size 100)
 
 ;; Disable splash screen
 (setq inhibit-startup-message t)
@@ -23,13 +22,22 @@
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; Font configuration
+(defvar ig-efsv1/default-font-size 100)
+(defvar ig-efsv1/fixed-font-size 100)
+(defvar ig-efsv1/variable-font-size 120)
+
+(when (string-equal system-type "darwin")
+  (setq ig-efsv1/default-font-size 150)
+  (setq ig-efsv1/fixed-font-size 150)
+  (setq ig-efsv1/variable-font-size 180))
+
 (set-face-attribute 'default nil :font "MesloLGS NF" :height ig-efsv1/default-font-size)
 
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "MesloLGS NF" :height 100)
+(set-face-attribute 'fixed-pitch nil :font "MesloLGS NF" :height ig-efsv1/fixed-font-size)
 
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Open Sans" :height 120 :weight 'normal)
+(set-face-attribute 'variable-pitch nil :font "Open Sans" :height ig-efsv1/variable-font-size :weight 'normal)
 
 ;; Initialize package sources
 (require 'package)
