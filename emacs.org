@@ -15,6 +15,22 @@ Personal Emacs configuration based on the System Crafters' [[https://www.youtube
 
 #+end_src
 
+* Startup Performance
+
+#+begin_src emacs-lisp
+
+  ;; The default is 800 kilobytes.  Measured in bytes
+  (setq gc-cons-threshold (* 50 1000 1000))
+
+  ;; Profile emacs startup
+  (add-hook 'emacs-startup-hook
+            (lambda ()
+              (message "*** Emacs loaded in %s seconds with %d garbage collections."
+                       (emacs-init-time "%.2f")
+                       gcs-done)))
+
+#+end_src
+
 * Package System Setup
 
 #+begin_src emacs-lisp
@@ -498,4 +514,13 @@ Packages:
   (setq epg-pinentry-mode 'loopback)
 
   (setenv "GPG_AGENT_INFO" nil)
+#+end_src
+
+* Runtime Performance
+
+#+begin_src emacs-lisp
+
+  ;; Make gc pauses faster by decreasing the threshold
+  (setq gc-cons-threshold (* 2 1000 1000))
+
 #+end_src
