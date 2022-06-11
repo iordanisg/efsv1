@@ -9,5 +9,4 @@ Personal Emacs configuration based on the System Crafters' [[https://www.youtube
 
 * Usage Instructions
 
-TODO
-
+Ideally, Emacs should be configured similarly in both Linux and macOS. To that end, [[https://github.com/plexus/chemacs2][Chemacs]] is used to switch between the available profiles, if necessary (=Babel= generates =init.el= in =~/emacs/default=).
