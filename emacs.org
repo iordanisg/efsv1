@@ -125,7 +125,7 @@ Packages:
     (setq evil-want-C-u-scroll t)
     (setq evil-want-C-u-delete t)
     (setq evil-want-C-i-jump nil)
-    (setq evil-want-C-w-delete t) ;; TODO: remote, it's set to `t` by default
+    (setq evil-want-C-w-delete t) ;; TODO: remove, it's set to `t` by default
     :config
     (evil-mode 1)
     (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
