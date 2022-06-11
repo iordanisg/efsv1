@@ -486,3 +486,17 @@ Packages:
     :hook (prog-mode . rainbow-delimiters-mode))
 
 #+end_src
+
+* Security
+
+** GPG
+
+*TODO*: do I need to set =GPG_AGENT_INFO=?
+
+#+begin_src emacs-lisp
+  (setq auth-sources '("~/.authinfo.gpg"))
+
+  (setq epg-pinentry-mode 'loopback)
+
+  (setenv "GPG_AGENT_INFO" nil)
+#+end_src
