@@ -118,7 +118,6 @@ Packages:
       "tt" '(counsel-load-theme :which-key "choose theme")))
 
   ;; evil
-  ;; https://github.com/emacs-evil/evil
   (use-package evil
     :init
     (setq evil-want-integration t)
@@ -140,7 +139,6 @@ Packages:
     (evil-set-initial-state 'dashboard-mode 'normal))
 
   ;; evil-collection
-  ;; https://github.com/emacs-evil/evil-collection
   (use-package evil-collection
     :after evil
     :custom (evil-collection-setup-minibuffer t)
