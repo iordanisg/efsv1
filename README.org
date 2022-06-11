@@ -1,0 +1,12 @@
+#+TITLE: Emacs Configuration
+#+AUTHOR: Iordanis Grigoriou
+
+* Preface
+
+Personal Emacs configuration based on the System Crafters' [[https://www.youtube.com/playlist?list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs from Scratch]] YouTube playlist.
+
+=Babel= is used to generate the main Emacs initialization file from code blocks embedded in the literate Org file, [[file:emacs.org]].
+
+* Usage Instructions
+
+Ideally, Emacs should be configured similarly in both Linux and macOS. To that end, [[https://github.com/plexus/chemacs2][Chemacs]] is used to switch between the available profiles, if necessary (=Babel= generates =init.el= in =~/emacs/default=).

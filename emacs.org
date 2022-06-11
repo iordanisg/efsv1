@@ -9,12 +9,9 @@ Personal Emacs configuration based on the System Crafters' [[https://www.youtube
 * Preamble
 
 #+begin_src emacs-lisp
-  ;; NOTE: init.el is now generated from emacs.org.  Please edit that file
-  ;;       in Emacs and init.el will be generated automatically!
 
-  ;; Adjust font sizes as required
-  (defvar efs/default-font-size 100)
-  (defvar efs/default-variable-font-size 120)
+  ;; NOTE: init.el is now generated from emacs.org
+  ;; Please edit that file in Emacs and init.el will be generated automatically!
 
 #+end_src
 
@@ -78,6 +75,10 @@ Personal Emacs configuration based on the System Crafters' [[https://www.youtube
 
 #+begin_src emacs-lisp
 
+  ;; Adjust font sizes as required
+  (defvar efs/default-font-size 100)
+  (defvar efs/default-variable-font-size 120)
+
   (when (string-equal system-type "darwin")
     (setq efs/default-font-size 150)
     (setq efs/default-variable-font-size 180))
@@ -117,7 +118,6 @@ Packages:
       "tt" '(counsel-load-theme :which-key "choose theme")))
 
   ;; evil
-  ;; https://github.com/emacs-evil/evil
   (use-package evil
     :init
     (setq evil-want-integration t)
@@ -139,7 +139,6 @@ Packages:
     (evil-set-initial-state 'dashboard-mode 'normal))
 
   ;; evil-collection
-  ;; https://github.com/emacs-evil/evil-collection
   (use-package evil-collection
     :after evil
     :custom (evil-collection-setup-minibuffer t)
@@ -341,26 +340,26 @@ Transparency set to 85%, while inactive window transparency set to 80%.
                             '(("^ *\\([-]\\) "
                                (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
-  ;; Set faces for heading levels
-  (dolist (face '((org-level-1 . 1.2)
-                  (org-level-2 . 1.1)
-                  (org-level-3 . 1.05)
-                  (org-level-4 . 1.0)
-                  (org-level-5 . 1.1)
-                  (org-level-6 . 1.1)
-                  (org-level-7 . 1.1)
-                  (org-level-8 . 1.1)))
-  (set-face-attribute (car face) nil :font "Open Sans" :weight 'normal :height (cdr face)))
+    ;; Set faces for heading levels
+    (dolist (face '((org-level-1 . 1.2)
+                    (org-level-2 . 1.1)
+                    (org-level-3 . 1.05)
+                    (org-level-4 . 1.0)
+                    (org-level-5 . 1.1)
+                    (org-level-6 . 1.1)
+                    (org-level-7 . 1.1)
+                    (org-level-8 . 1.1)))
+    (set-face-attribute (car face) nil :font "Open Sans" :weight 'normal :height (cdr face)))
 
-  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-table nil :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-hide nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+    ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+    (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-table nil :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-hide nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 
 #+end_src
 
