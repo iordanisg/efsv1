@@ -302,6 +302,33 @@ Packages:
 
 #+end_src
 
+** Transparency
+
+=toggle-transparency= function taken from the [[https://www.emacswiki.org/emacs/TransparentEmacs][Emacs Wiki]].
+
+Transparency set to 85%, while inactive window transparency set to 80%.
+
+*TODO*: create a function to increase/decrease transparency, similar to =text-scale-{increase,decrease}=
+
+#+begin_src emacs-lisp
+
+  (defun toggle-transparency ()
+    (interactive)
+    (let ((alpha (frame-parameter nil 'alpha)))
+      (set-frame-parameter
+       nil 'alpha
+       (if (eql (cond ((numberp alpha) alpha)
+                      ((numberp (cdr alpha)) (cdr alpha))
+                      ;; Also handle undocumented (<active> <inactive>) form.
+                      ((numberp (cadr alpha)) (cadr alpha)))
+                100)
+           '(85 . 80) '(100 . 100)))))
+
+  (efs/leader-keys
+    "tT" '(toggle-transparency :which-key "toggle transparency"))
+
+#+end_src
+
 * Org Mode
 
 ** Better Font Faces
