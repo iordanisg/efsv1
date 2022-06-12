@@ -1,6 +1,6 @@
 #+TITLE: Emacs Configuration
 #+AUTHOR: Iordanis Grigoriou
-#+PROPERTY: header-args:emacs-lisp :tangle ~/emacs/default/init.el
+#+PROPERTY: header-args:emacs-lisp :tangle ~/emacs/efsv1/init.el
 
 * Preface
 
