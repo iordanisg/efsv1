@@ -1,6 +1,7 @@
 #+TITLE: Emacs Configuration
 #+AUTHOR: Iordanis Grigoriou
-#+PROPERTY: header-args:emacs-lisp :tangle ~/emacs/efsv1/init.el
+#+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
+#+auto_tangle: t
 
 * Preface
 
@@ -546,13 +547,27 @@ Transparency set to 85%, while inactive window transparency set to 80%.
 
 #+begin_src emacs-lisp
 
-  (with-eval-after-load 'org
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((emacs-lisp . t)
-       (python . t)))
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (python . t)))
 
-    (push '("conf-unix" . conf-unix) org-src-lang-modes))
+  (setq org-confirm-babel-evaluate nil)
+
+  (push '("conf-unix" . conf-unix) org-src-lang-modes)
+
+#+end_src
+
+** Structure Templates
+
+#+begin_src emacs-lisp
+
+  ;; This is needed as of Org 9.2
+  (require 'org-tempo)
+
+  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
 
 #+end_src
 
@@ -649,5 +664,20 @@ Packages:
 
   ;; Make gc pauses faster by decreasing the threshold
   (setq gc-cons-threshold (* 2 1000 1000))
+
+#+end_src
+
+* Applications
+
+** Some App
+
+#+NAME: the-value
+#+begin_src emacs-lisp :tangle no
+(+ 7 2)
+#+end_src
+
+#+begin_src conf-unix :tangle /tmp/removeme.conf :noweb yes
+
+  value=<<the-value()>>
 
 #+end_src
