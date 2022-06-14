@@ -581,6 +581,14 @@ Transparency set to 85%, while inactive window transparency set to 80%.
 
 #+end_src
 
+** org-cliplink
+
+#+begin_src emacs-lisp
+
+  (use-package org-cliplink)
+
+#+end_src
+
 * Development
 
 ** Projectile
