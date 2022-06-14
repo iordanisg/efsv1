@@ -558,7 +558,13 @@ Transparency set to 85%, while inactive window transparency set to 80%.
 
 ** Auto-tangle Configuration Files
 
-*TODO*: look into [[https://github.com/yilkalargaw/org-auto-tangle][org-auto-tangle]]
+#+begin_src emacs-lisp
+
+  (use-package org-auto-tangle
+    :defer t
+    :hook (org-mode . org-auto-tangle-mode))
+
+#+end_src
 
 * Development
 
