@@ -70,9 +70,6 @@ Personal Emacs configuration based on the System Crafters' [[https://www.youtube
   (tooltip-mode -1)    ; disable tooltips
   (set-fringe-mode 10) ; give some breathing space
 
-  ;; Enable visible bell
-  ;; (setq visible-bell t) ; replaced by `doom-themes-visual-bell-config`
-
   ;; Display column number in mode-line
   (column-number-mode)
   
