@@ -133,8 +133,25 @@ Packages:
       :global-prefix "C-SPC")
 
     (efs/leader-keys
-      "t" '(:ignore t :which-key "toggles")
-      "tt" '(counsel-load-theme :which-key "choose theme")))
+      ":" '(counsel-M-x :which-key "M-x")
+      "f" '(:ignore t :which-key "file")
+      "ff" '(counsel-find-file :which-key "counsel-find-file")
+      "g" '(:ignore t :which-key "git")
+      "gg" '(magit-status :which-key "magit-status")
+      "t" '(:ignore t :which-key "toggle")
+      "tt" '(counsel-load-theme :which-key "choose theme")
+      "w" '(:ignore t :which-key "window")
+      "wh" '(evil-window-left :which-key "evil-window-left")
+      "wj" '(evil-window-down :which-key "evil-window-down")
+      "wk" '(evil-window-up :which-key "evil-window-up")
+      "wl" '(evil-window-right :which-key "evil-window-right")
+      "wH" '(evil-window-move-far-left :which-key "evil-window-move-far-left")
+      "wJ" '(evil-window-move-very-bottom :which-key "evil-window-move-very-bottom")
+      "wK" '(evil-window-move-very-top :which-key "evil-window-move-very-top")
+      "wL" '(evil-window-move-far-right :which-key "evil-window-move-far-right")
+      "wC" '(evil-window-delete :which-key "evil-window-delete")
+      "wv" '(evil-window-vsplit :which-key "evil-window-vsplit")
+      "ws" '(evil-window-split :which-key "evil-window-split")))
 
   ;; evil
   (use-package evil
