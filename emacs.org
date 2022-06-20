@@ -80,10 +80,12 @@ Personal Emacs configuration based on the System Crafters' [[https://www.youtube
   (global-display-line-numbers-mode t)
 
   ;; Disable line numbers for some modes
-  (dolist (mode '(org-mode-hook
-                  term-mode-hook
+  (dolist (mode '(eshell-mode-hook
+                  org-mode-hook
                   shell-mode-hook
-                  eshell-mode-hook))
+                  term-mode-hook
+                  treemacs-mode-hook
+                  vterm-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 #+end_src
