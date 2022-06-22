@@ -113,20 +113,28 @@ Personal Emacs configuration based on the System Crafters' [[https://www.youtube
 #+begin_src emacs-lisp
 
   ;; Adjust font sizes as required
-  (defvar efs/default-font-size 100)
-  (defvar efs/default-variable-font-size 120)
+  (defvar ig/default-font-size 110)
+  (defvar ig/default-variable-font-size 120)
 
   (when (string-equal system-type "darwin")
-    (setq efs/default-font-size 150)
-    (setq efs/default-variable-font-size 180))
+    (setq ig/default-font-size 150)
+    (setq ig/default-variable-font-size 180))
 
-  (set-face-attribute 'default nil :font "MesloLGS NF" :height efs/default-font-size)
+  (pcase system-type
+    ('gnu/linux
+     (set-face-attribute 'default nil
+                         :font "Fira Mono"
+                         :height ig/default-font-size))
+    ('darwin
+     (set-face-attribute 'default nil
+                         :font "Fira Mono"
+                         :height ig/default-font-size)))
 
   ;; Set the fixed pitch face
-  (set-face-attribute 'fixed-pitch nil :font "MesloLGS NF" :height efs/default-font-size)
+  (set-face-attribute 'fixed-pitch nil :family "Fira Mono" :height ig/default-font-size)
 
   ;; Set the variable pitch face
-  (set-face-attribute 'variable-pitch nil :font "Open Sans" :height efs/default-variable-font-size :weight 'normal)
+  (set-face-attribute 'variable-pitch nil :family "Open Sans" :height ig/default-variable-font-size)
 
 #+end_src
 
@@ -136,7 +144,7 @@ Packages:
 - [[https://github.com/noctuid/general.el][general.el]]
 - [[https://github.com/emacs-evil/evil][evil mode]]
 - [[https://github.com/emacs-evil/evil-collection][evil-collection]]
-  
+
 #+begin_src emacs-lisp
 
   ;; Make ESC quit prompts
@@ -144,18 +152,27 @@ Packages:
 
   ;; general.el
   (use-package general
+    :after evil
     :config
-    (general-create-definer efs/leader-keys
+    (general-create-definer ig/leader-keys
       :keymaps '(normal insert visual emacs)
       :prefix "SPC"
       :global-prefix "C-SPC")
 
-    (efs/leader-keys
+    (ig/leader-keys
       ":" '(counsel-M-x :which-key "M-x")
+      "b" '(:ignore t :which-key "buffer")
+      "bb" '(counsel-switch-buffer :which-key "counsel-switch-buffer")
       "f" '(:ignore t :which-key "file")
       "ff" '(counsel-find-file :which-key "counsel-find-file")
+      "fde" '(lambda () (interactive) (find-file (expand-file-name "~/emacs/efsv1/emacs.org")))
       "g" '(:ignore t :which-key "git")
       "gg" '(magit-status :which-key "magit-status")
+      "h" '(:ignore t :which-key "help")
+      "hf" '(describe-function :which-key "describe-function")
+      "ho" '(describe-symbol :which-key "describe-symbol")
+      "hv" '(describe-variable :which-key "describe-variable")
+      "hx" '(describe-command :which-key "describe-command")
       "t" '(:ignore t :which-key "toggle")
       "tt" '(counsel-load-theme :which-key "choose theme")
       "w" '(:ignore t :which-key "window")
@@ -167,7 +184,7 @@ Packages:
       "wJ" '(evil-window-move-very-bottom :which-key "evil-window-move-very-bottom")
       "wK" '(evil-window-move-very-top :which-key "evil-window-move-very-top")
       "wL" '(evil-window-move-far-right :which-key "evil-window-move-far-right")
-      "wC" '(evil-window-delete :which-key "evil-window-delete")
+      "wc" '(evil-window-delete :which-key "evil-window-delete")
       "wv" '(evil-window-vsplit :which-key "evil-window-vsplit")
       "ws" '(evil-window-split :which-key "evil-window-split")))
 
@@ -179,7 +196,6 @@ Packages:
     (setq evil-want-C-u-scroll t)
     (setq evil-want-C-u-delete t)
     (setq evil-want-C-i-jump nil)
-    (setq evil-want-C-w-delete t) ;; TODO: remove, it's set to `t` by default
     :config
     (evil-mode 1)
     (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
@@ -262,10 +278,12 @@ Packages:
 
   ;; which-key
   (use-package which-key
-    :init (which-key-mode)
+    :defer 0
+    :init
     :diminish which-key-mode
     :config
-    (setq which-key-idle-delay 1))
+    (which-key-mode)
+    (setq which-key-idle-delay 0.5))
 
   #+end_src
 
@@ -297,20 +315,34 @@ Packages:
 
   ;; ivy-rich
   (use-package ivy-rich
+    :after ivy
     :init
     (ivy-rich-mode 1))
 
   ;; counsel
   (use-package counsel
-    :bind (("M-x" . counsel-M-x)
-           ;; I prefer `counsel-switch-buffer` to `counsel-ibuffer` for the preview functionality
-           ("C-x b" . counsel-switch-buffer)
-           ("C-x C-f" . counsel-find-file)
-           :map minibuffer-local-map
-           ("C-r" . 'counsel-minibuffer-history)))
+    :bind (:map minibuffer-local-map
+           ("C-r" . 'counsel-minibuffer-history))
+    :config
+    (counsel-mode 1))
 
   ;; swiper
   (use-package swiper)
+
+#+end_src
+
+*** Improved Candidate Sorting with prescient.el
+
+#+begin_src emacs-lisp
+
+  (use-package ivy-prescient
+    :after counsel
+    :custom
+    (ivy-prescient-enable-filtering nil)
+    :config
+    ;; Uncomment the following line to have sorting remembered across sessions!
+    ;(prescient-persist-mode 1)
+    (ivy-prescient-mode 1))
 
 #+end_src
 
@@ -323,6 +355,7 @@ Packages:
 
   ;; helpful
   (use-package helpful
+    :commands (helpful-callable helpful-variable helpful-command helpful-key)
     :custom
     (counsel-describe-function-function #'helpful-callable)
     (counsel-describe-variable-function #'helpful-variable)
@@ -342,7 +375,8 @@ Packages:
 #+begin_src emacs-lisp
 
   ;; hydra
-  (use-package hydra)
+  (use-package hydra
+    :defer t)
 
   (defhydra hydra-text-scale (:timeout 4)
     "scale text"
@@ -350,7 +384,7 @@ Packages:
     ("k" text-scale-decrease "out")
     ("f" nil "finished" :exit t))
 
-  (efs/leader-keys
+  (ig/leader-keys
     "ts" '(hydra-text-scale/body :which-key "scale text"))
 
 #+end_src
@@ -377,7 +411,7 @@ Transparency set to 85%, while inactive window transparency set to 80%.
                 100)
            '(85 . 80) '(100 . 100)))))
 
-  (efs/leader-keys
+  (ig/leader-keys
     "tT" '(toggle-transparency :which-key "toggle transparency"))
 
 #+end_src
@@ -388,11 +422,13 @@ Transparency set to 85%, while inactive window transparency set to 80%.
 
 #+begin_src emacs-lisp
 
-  (defun efs/org-font-setup ()
+  (defun ig/org-font-setup ()
     ;; Replace list hyphen with dot
     (font-lock-add-keywords 'org-mode
                             '(("^ *\\([-]\\) "
                                (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+
+    (require 'org-indent)
 
     ;; Set faces for heading levels
     (dolist (face '((org-level-1 . 1.2)
@@ -403,17 +439,20 @@ Transparency set to 85%, while inactive window transparency set to 80%.
                     (org-level-6 . 1.1)
                     (org-level-7 . 1.1)
                     (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font "Open Sans" :weight 'normal :height (cdr face)))
+      (set-face-attribute (car face) nil :font "Open Sans" :weight 'normal :height (cdr face)))
 
     ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-    (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-    (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
-    (set-face-attribute 'org-table nil :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-table nil    :inherit 'fixed-pitch)
+    (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
     (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
     (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
     (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-    (set-face-attribute 'org-hide nil :inherit 'fixed-pitch)
-    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+    (set-face-attribute 'org-checkbox nil  :inherit 'fixed-pitch)
+    (set-face-attribute 'line-number nil :inherit 'fixed-pitch)
+    (set-face-attribute 'line-number-current-line nil :inherit 'fixed-pitch))
 
 #+end_src
 
@@ -421,13 +460,15 @@ Transparency set to 85%, while inactive window transparency set to 80%.
 
 #+begin_src emacs-lisp
 
-  (defun efs/org-mode-setup ()
+  (defun ig/org-mode-setup ()
     (org-indent-mode)
     (variable-pitch-mode 1)
     (visual-line-mode 1))
 
   (use-package org
-    :hook (org-mode . efs/org-mode-setup)
+    :pin org
+    :commands (org-capture org-agenda)
+    :hook (org-mode . ig/org-mode-setup)
     :config
     (setq org-ellipsis " ▾")
     (setq org-hide-emphasis-markers t)
@@ -522,18 +563,18 @@ Transparency set to 85%, while inactive window transparency set to 80%.
 
     (setq org-capture-templates
           `(("t" "Tasks / Projects")
-            ("tt" "Task" entry (file+olp "~/org/Tasks.org" "Inbox")
+            ("tt" "Task" entry (file+olp "~/org/efsv1/Tasks.org" "Inbox")
                  "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
 
             ("j" "Journal Entries")
             ("jj" "Journal" entry
-                 (file+olp+datetree "~/org/Journal.org")
+                 (file+olp+datetree "~/org/efsv1/Journal.org")
                  "\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
                  ;; ,(dw/read-file-as-string "~/Notes/Templates/Daily.org")
                  :clock-in :clock-resume
                  :empty-lines 1)
             ("jm" "Meeting" entry
-                 (file+olp+datetree "~/org/Journal.org")
+                 (file+olp+datetree "~/org/efsv1/Journal.org")
                  "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
                  :clock-in :clock-resume
                  :empty-lines 1)
@@ -550,7 +591,7 @@ Transparency set to 85%, while inactive window transparency set to 80%.
       ;; TODO: open org-capture
       (lambda () (interactive) (org-capture nil "jj")))
 
-    (efs/org-font-setup))
+    (ig/org-font-setup))
 
 #+end_src
 
@@ -570,13 +611,13 @@ Transparency set to 85%, while inactive window transparency set to 80%.
 
 #+begin_src emacs-lisp
 
-  (defun efs/org-mode-visual-fill ()
+  (defun ig/org-mode-visual-fill ()
     (setq visual-fill-column-width 100
           visual-fill-column-center-text t)
     (visual-fill-column-mode 1))
 
   (use-package visual-fill-column
-    :hook (org-mode . efs/org-mode-visual-fill))
+    :hook (org-mode . ig/org-mode-visual-fill))
 
 #+end_src
 
@@ -584,14 +625,15 @@ Transparency set to 85%, while inactive window transparency set to 80%.
 
 #+begin_src emacs-lisp
 
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (python . t)))
+  (with-eval-after-load 'org
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((emacs-lisp . t)
+       (python . t)))
 
-  (setq org-confirm-babel-evaluate nil)
+    (setq org-confirm-babel-evaluate nil)
 
-  (push '("conf-unix" . conf-unix) org-src-lang-modes)
+    (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
 #+end_src
 
@@ -599,12 +641,13 @@ Transparency set to 85%, while inactive window transparency set to 80%.
 
 #+begin_src emacs-lisp
 
-  ;; This is needed as of Org 9.2
-  (require 'org-tempo)
+  (with-eval-after-load 'org
+    ;; This is needed as of Org 9.2
+    (require 'org-tempo)
 
-  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+    (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+    (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+    (add-to-list 'org-structure-template-alist '("py" . "src python")))
 
 #+end_src
 
@@ -626,7 +669,127 @@ Transparency set to 85%, while inactive window transparency set to 80%.
 
 #+end_src
 
+** Org-roam
+
+#+begin_src emacs-lisp
+  (use-package org-roam
+    :ensure t
+    :init
+    (setq org-roam-v2-ack t)
+    :custom
+    (org-roam-directory "~/org/roam")
+    (org-roam-completion-everywhere t)
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n i" . org-roam-node-insert)
+           :map org-mode-map
+           ("C-M-i" . completion-at-point))
+    :config
+    (org-roam-setup))
+#+end_src
+
 * Development
+
+** Languages
+
+*** IDE Features with lsp-mode
+
+**** lsp-mode
+
+#+begin_src emacs-lisp
+
+  (defun ig/lsp-mode-setup ()
+    (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+    (lsp-headerline-breadcrumb-mode))
+
+  (use-package lsp-mode
+    :commands (lsp lsp-deferred)
+    :hook (lsp-mode . ig/lsp-mode-setup)
+    :init
+    (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+    :config
+    (lsp-enable-which-key-integration t))
+
+#+end_src
+
+**** lsp-ui
+
+#+begin_src emacs-lisp
+
+  (use-package lsp-ui
+    :hook (lsp-mode . lsp-ui-mode)
+    :custom
+    (lsp-ui-doc-position 'bottom))
+
+#+end_src
+
+**** lsp-treemacs
+
+#+begin_src emacs-lisp
+
+  (use-package lsp-treemacs
+    :after lsp)
+
+#+end_src
+
+**** lsp-ivy
+
+#+begin_src emacs-lisp
+
+  (use-package lsp-ivy
+    :after lsp)
+
+#+end_src
+
+*** Golang
+
+#+begin_src emacs-lisp
+
+  (use-package go-mode
+    :mode "\\.go\\'"
+    :hook (go-mode . lsp-deferred)
+    :config)
+
+#+end_src
+
+*** Python
+
+#+begin_src emacs-lisp
+
+  (use-package lsp-pyright
+    :hook (python-mode . lsp-deferred)
+    :config)
+
+#+end_src
+
+** Company Mode
+
+#+begin_src emacs-lisp
+
+  (use-package company
+    :after lsp-mode
+    :hook (lsp-mode . company-mode)
+    :bind (:map company-active-map
+           ("<tab>" . company-complete-selection))
+          (:map lsp-mode-map
+           ("<tab>" . company-indent-or-complete-common))
+    :custom
+    (company-minimum-prefix-length 1)
+    (company-idle-delay 0.0))
+
+  (use-package company-box
+    :hook (company-mode . company-box-mode))
+#+end_src
+
+** Flycheck
+
+#+begin_src emacs-lisp
+
+  (use-package flycheck
+    :ensure t
+    :init (global-flycheck-mode))
+
+#+end_src
 
 ** Projectile
 
@@ -650,6 +813,7 @@ Packages:
 
   ;; counsel-projectile
   (use-package counsel-projectile
+    :after projectile
     :config (counsel-projectile-mode))
 
 #+end_src
@@ -668,14 +832,22 @@ Resources:
 
   ;; magit
   (use-package magit
+    :commands magit-status
     :custom
     (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
-  (use-package evil-magit
+  ;; forge
+  (use-package forge
     :after magit)
 
-  ;; forge
-  (use-package forge)
+#+end_src
+
+** Commenting
+
+#+begin_src emacs-lisp
+
+  (use-package evil-nerd-commenter
+  :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 
 #+end_src
 
@@ -692,27 +864,104 @@ Packages:
 
 #+end_src
 
+* Terminals
+
+** term-mode
+
+#+begin_src emacs-lisp
+
+  (use-package term
+    :commands term
+    :config
+    (setq explicit-shell-file-name "bash") ;; Change this to zsh, etc
+    ;;(setq explicit-zsh-args '())         ;; Use 'explicit-<shell>-args for shell-specific args
+
+    ;; Match the default Bash shell prompt.  Update this if you have a custom prompt
+    (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
+
+#+end_src
+
+*** Better term-mode colors
+
+#+begin_src emacs-lisp
+
+  (use-package eterm-256color
+    :hook (term-mode . eterm-256color-mode))
+
+#+end_src
+
+** vterm
+
+#+begin_src emacs-lisp
+
+  (use-package vterm
+    :commands vterm
+    :config
+    (setq term-prompt-regexp "^[^#$%>\n]*[#$%❯] *")  ;; Set this to match your custom shell prompt
+    (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
+    (setq vterm-max-scrollback 10000))
+
+#+end_src
+
+** Eshell
+
+#+begin_src emacs-lisp
+
+  (defun ig/configure-eshell ()
+    ;; Save command history when commands are entered
+    (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+
+    ;; Truncate buffer for performance
+    (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+
+    ;; Bind some useful keys for evil-mode
+    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
+    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
+    (evil-define-key '(insert) eshell-mode-map (kbd "C-j") 'eshell-previous-input)
+    (evil-define-key '(insert) eshell-mode-map (kbd "C-k") 'eshell-next-input)
+    (evil-normalize-keymaps)
+
+    (setq eshell-history-size         10000
+          eshell-buffer-maximum-lines 10000
+          eshell-hist-ignoredups t
+          eshell-scroll-to-bottom-on-input t))
+
+  (use-package eshell-git-prompt
+    :after eshell)
+
+  (use-package eshell
+    :hook (eshell-first-time-mode . ig/configure-eshell)
+    :config
+
+    (with-eval-after-load 'esh-opt
+      (setq eshell-destroy-buffer-when-process-dies t)
+      (setq eshell-visual-commands '("htop" "zsh" "vim")))
+
+    (eshell-git-prompt-use-theme 'powerline))
+
+  (use-package eshell-syntax-highlighting
+    :after eshell-mode
+    :ensure t ;; Install if not already installed.
+    :config
+    ;; Enable in all Eshell buffers.
+    (eshell-syntax-highlighting-global-mode +1))
+
+#+end_src
+
 * Security
 
 ** GPG
 
-*TODO*: do I need to set =GPG_AGENT_INFO=?
-
 #+begin_src emacs-lisp
-  (setq auth-sources '("~/.authinfo.gpg"))
 
   (setq epg-pinentry-mode 'loopback)
 
-  (setenv "GPG_AGENT_INFO" nil)
 #+end_src
 
-* Runtime Performance
+* Notifications
 
 #+begin_src emacs-lisp
-
-  ;; Make gc pauses faster by decreasing the threshold
-  (setq gc-cons-threshold (* 2 1000 1000))
-
+(use-package org-wild-notifier)
 #+end_src
 
 * Applications
@@ -729,3 +978,13 @@ Packages:
   value=<<the-value()>>
 
 #+end_src
+
+* Runtime Performance
+
+#+begin_src emacs-lisp
+
+  ;; Make gc pauses faster by decreasing the threshold
+  (setq gc-cons-threshold (* 2 1000 1000))
+
+#+end_src
+
