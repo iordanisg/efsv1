@@ -10,6 +10,8 @@
 # Undo-tree save-files
 *.~undo-tree
 
+etc/
+var/
 elpa/
 transient/
 url/
